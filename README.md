@@ -5,10 +5,11 @@
 ### Event Registration Management System. JavaFX, event handling, JDBC, MySQL.
 
 [![Project](https://img.shields.io/badge/GitHub-Venkat5599%2Feventra-181717)](https://github.com/Venkat5599/eventra)
+[![Website](https://img.shields.io/badge/Website-eventra--five--nu.vercel.app-000000)](https://eventra-five-nu.vercel.app/)
 [![Stack](https://img.shields.io/badge/JavaFX%2021%20·%20JDBC%20·%20MySQL%208-14151a)](backend/pom.xml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
 
-**[ Open the repo ↗ ](https://github.com/Venkat5599/eventra)** · **[ Run it ↓ ](#run-it)** · **[ Event handling ↓ ](#event-handling)**
+**[ Website ↗ ](https://eventra-five-nu.vercel.app/)** · **[ Open the repo ↗ ](https://github.com/Venkat5599/eventra)** · **[ Run it ↓ ](#run-it)** · **[ Event handling ↓ ](#event-handling)**
 
 </div>
 
@@ -66,6 +67,8 @@ The first window asks for the JDBC URL, user, and password, and saves them in `d
 The tables are created on connect if they are missing. They are empty until you add a row in the desk.
 
 Project link: https://github.com/Venkat5599/eventra
+
+Website: https://eventra-five-nu.vercel.app/
 
 ## Layout
 
