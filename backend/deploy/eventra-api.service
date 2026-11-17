@@ -1,0 +1,20 @@
+[Unit]
+Description=Eventra API (Java + JDBC on MySQL)
+After=network.target mysql.service
+Wants=mysql.service
+
+[Service]
+User=eventra
+Group=eventra
+WorkingDirectory=/opt/eventra
+EnvironmentFile=/etc/eventra/eventra.env
+ExecStart=/opt/eventra/jre/bin/java -Xms64m -Xmx192m -Duser.timezone=UTC -jar /opt/eventra/eventra-backend.jar
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

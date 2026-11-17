@@ -1,0 +1,13 @@
+node_modules/
+dist/
+target/
+.vercel/
+vercel.json
+_ref/
+work/
+tpl/
+*.tgz
+.env
+.env.*
+.DS_Store
+backend/deploy/*.log
