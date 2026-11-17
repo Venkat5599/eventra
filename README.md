@@ -2,7 +2,7 @@
 
 Event registration, in one place. Create an event, take registrations up to capacity, keep a waitlist, check people in, and schedule sessions without double-booking a room.
 
-**Live site:** coming up in the deploy step. The dashboard is at `/dashboard/`.
+**Live site:** <https://eventra-five-nu.vercel.app/> — dashboard at <https://eventra-five-nu.vercel.app/dashboard/>.
 
 ## Contents
 
