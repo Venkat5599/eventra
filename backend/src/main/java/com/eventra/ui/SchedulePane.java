@@ -26,9 +26,11 @@ public final class SchedulePane {
     private final ComboBox<String> eventFilter = new ComboBox<>();
     private final TableView<Session> table = new TableView<>();
 
+    private boolean filling;
+
     public SchedulePane(Desk desk) {
         this.desk = desk;
-        eventFilter.setOnAction(ev -> render(desk.snap()));
+        eventFilter.setOnAction(ev -> { if (!filling) render(desk.snap()); });
         Button add = new Button("Add");
         add.setOnAction(ev -> edit(null));
         Button edit = new Button("Edit");
@@ -48,12 +50,17 @@ public final class SchedulePane {
     public VBox root() { return root; }
 
     public void render(Snapshot s) {
-        String keep = eventFilter.getValue();
-        eventFilter.getItems().clear();
-        eventFilter.getItems().add("all");
-        for (EventItem e : s.events()) eventFilter.getItems().add(e.id() + " " + e.name());
-        if (keep != null && eventFilter.getItems().contains(keep)) eventFilter.setValue(keep);
-        else eventFilter.setValue("all");
+        filling = true;
+        try {
+            String keep = eventFilter.getValue();
+            eventFilter.getItems().clear();
+            eventFilter.getItems().add("all");
+            for (EventItem e : s.events()) eventFilter.getItems().add(e.id() + " " + e.name());
+            if (keep != null && eventFilter.getItems().contains(keep)) eventFilter.setValue(keep);
+            else eventFilter.setValue("all");
+        } finally {
+            filling = false;
+        }
         String ev = eventFilter.getValue();
         String eventId = ev == null || "all".equals(ev) ? "" : ev.split(" ")[0];
         var list = FXCollections.<Session>observableArrayList();

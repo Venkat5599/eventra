@@ -31,6 +31,8 @@ public final class RegsPane {
     private final Button checkIn = new Button("Check in");
     private FilteredList<Registration> rows;
 
+    private boolean filling;
+
     public RegsPane(Desk desk) {
         this.desk = desk;
         ticket.setPromptText("Ticket code");
@@ -39,8 +41,8 @@ public final class RegsPane {
         });
         statusFilter.getItems().addAll("all", "confirmed", "waitlisted", "cancelled", "checked_in");
         statusFilter.setValue("all");
-        statusFilter.setOnAction(ev -> apply());
-        eventFilter.setOnAction(ev -> apply());
+        statusFilter.setOnAction(ev -> { if (!filling) apply(); });
+        eventFilter.setOnAction(ev -> { if (!filling) apply(); });
         Button register = new Button("Register");
         register.setOnAction(ev -> register());
         checkIn.setOnAction(ev -> {
@@ -74,11 +76,16 @@ public final class RegsPane {
     public VBox root() { return root; }
 
     public void render(Snapshot s) {
-        String keep = eventFilter.getValue();
-        eventFilter.getItems().clear();
-        eventFilter.getItems().add("all");
-        for (EventItem e : s.events()) eventFilter.getItems().add(e.id() + " " + e.name());
-        eventFilter.setValue(keep != null && eventFilter.getItems().contains(keep) ? keep : "all");
+        filling = true;
+        try {
+            String keep = eventFilter.getValue();
+            eventFilter.getItems().clear();
+            eventFilter.getItems().add("all");
+            for (EventItem e : s.events()) eventFilter.getItems().add(e.id() + " " + e.name());
+            eventFilter.setValue(keep != null && eventFilter.getItems().contains(keep) ? keep : "all");
+        } finally {
+            filling = false;
+        }
         rows = new FilteredList<>(FXCollections.observableArrayList(s.registrations()), x -> true);
         table.setItems(rows);
         apply();
