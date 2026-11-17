@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef, useState } from "react"
-import { Download, ExternalLink, RefreshCw, RotateCcw, Upload } from "lucide-react"
+import { Download, RefreshCw, RotateCcw, Upload } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -81,7 +81,6 @@ export function DataPage() {
               <CardTitle className="text-base">{live ? "Backend: connected" : "Backend: not reachable"}</CardTitle>
               <CardDescription>Java 21 (JDK HttpServer) + JDBC on MySQL 8. Every write runs in one transaction with the event row locked, so capacity holds when people register at the same time.</CardDescription>
             </div>
-            <Button size="sm" variant="outline" render={<a href="/BACKEND.md" target="_blank" rel="noreferrer" />} nativeButton={false}>Backend guide <ExternalLink /></Button>
           </CardHeader>
           <CardContent>
             <Table>

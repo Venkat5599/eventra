@@ -35,9 +35,6 @@ export default function HomePage() {
             <Link href="/dashboard" className="rounded-full bg-[#040404] px-5 py-2.5 text-sm text-white">
               Open the dashboard
             </Link>
-            <a href="/BACKEND.md" className="rounded-full border border-[#04040424] px-5 py-2.5 text-sm">
-              Backend guide
-            </a>
           </div>
         </section>
         <section className="border-y border-[#04040414] bg-[#f6f6f7]">
