@@ -11,5 +11,6 @@ tpl/
 *.tgz
 .env
 .env.*
+db.properties
 .DS_Store
 backend/deploy/*.log

@@ -25,7 +25,9 @@ fi
 echo "java-ok"
 
 install -m 0644 "$SRC/eventra-backend.jar" /opt/eventra/eventra-backend.jar
-install -m 0644 "$SRC/seed.json" /opt/eventra/seed.json
+if [ -f "$SRC/seed.json" ]; then
+  install -m 0644 "$SRC/seed.json" /opt/eventra/seed.json
+fi
 install -m 0644 "$SRC/eventra-api.service" /etc/systemd/system/eventra-api.service
 
 mkdir -p /etc/eventra

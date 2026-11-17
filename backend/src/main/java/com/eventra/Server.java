@@ -51,8 +51,6 @@ public final class Server {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         Db db = new Db(required("DB_URL"), required("DB_USER"), required("DB_PASSWORD"));
         db.migrate();
-        int seeded = db.seedIfEmpty(env("SEED_FILE", ""), JSON);
-        if (seeded > 0) System.out.println("Loaded " + seeded + " sample rows into an empty database.");
 
         Set<String> cors = new HashSet<>();
         for (String o : env("CORS_ORIGINS", "").split(",")) if (!o.isBlank()) cors.add(o.trim());
