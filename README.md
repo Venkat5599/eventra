@@ -2,7 +2,7 @@
 
 Event registration, in one place. Create an event, take registrations up to capacity, keep a waitlist, check people in, and schedule sessions without double-booking a room.
 
-**Live site:** <https://eventra-five-nu.vercel.app/> — dashboard at <https://eventra-five-nu.vercel.app/dashboard/>.
+The app is a Next.js project in `web/`.
 
 ## Contents
 
@@ -24,25 +24,15 @@ The dashboard header says **Live · MySQL database** when the API answers, and *
 
 ## Run it locally
 
-The built site is in `site/`.
-
 ```bash
-python3 serve.py
-```
-
-Open <http://localhost:4611/>. Dashboard: <http://localhost:4611/dashboard/>.
-
-Without the API running, the dashboard uses the offline copy and says so.
-
-To work on the dashboard:
-
-```bash
-cd dashboard
+cd web
 npm install
 npm run dev
 ```
 
-That serves the dashboard source on port 5180.
+Open <http://localhost:3000/>. Dashboard: <http://localhost:3000/dashboard>.
+
+Without the API running, the dashboard uses the offline copy and says so.
 
 ## The backend
 
@@ -60,14 +50,12 @@ java -jar target/eventra-backend.jar
 
 `GET http://127.0.0.1:8796/api/health` should return `{"ok":true,"service":"eventra-api"}`.
 
-The dashboard calls `/api` on the same host. A full event puts the next person on the waitlist. A cancel moves the earliest waitlisted person into the free seat. A room already booked for that time is refused.
+The dashboard calls `/api` on the same host. Set `EVENTRA_API_ORIGIN` when the API is on another host. A full event puts the next person on the waitlist. A cancel moves the earliest waitlisted person into the free seat. A room already booked for that time is refused.
 
 ## Layout
 
 | Path | What |
 |---|---|
-| `site/` | Built website. Landing at `/`, dashboard at `/dashboard/` |
-| `dashboard/` | Dashboard source (Vite, React, Tailwind) |
+| `web/` | Next.js app. Landing at `/`, dashboard at `/dashboard` |
 | `backend/` | Java API and the host install files in `backend/deploy/` |
 | `BACKEND.md` | Course backend guide (JavaFX + JDBC + MySQL, 15 marks) |
-| `serve.py` | Local static server for `site/` |

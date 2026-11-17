@@ -193,7 +193,7 @@ Rules for every DAO:
 
 ## 6. Business rules (the dashboard already follows these)
 
-Put these in `service/`, not in the UI. The web dashboard (`dashboard/src/lib/db.ts`) uses the same rules and messages, so you can compare behaviour side by side.
+Put these in `service/`, not in the UI. The web dashboard (`web/lib/db.ts`) uses the same rules and messages, so you can compare behaviour side by side.
 
 | Operation | Rule |
 |---|---|
@@ -274,7 +274,7 @@ Build and run it locally against your own MySQL:
 cd backend
 mvn -q package
 DB_URL='jdbc:mysql://127.0.0.1:3306/eventra' DB_USER=eventra DB_PASSWORD='choose-a-password' \
-  SEED_FILE=deploy/seed.json CORS_ORIGINS=http://localhost:4611 \
+  SEED_FILE=deploy/seed.json \
   java -jar target/eventra-backend.jar
 curl http://127.0.0.1:8796/api/health
 ```
@@ -309,8 +309,7 @@ Use driver `org.xerial:sqlite-jdbc` and URL `jdbc:sqlite:eventra.db`. SQLite has
 
 | Path | What |
 |---|---|
-| `site/` | Built website: landing at `/`, dashboard at `/dashboard/` |
-| `dashboard/` | Dashboard source (Vite + React + Tailwind + shadcn/ui). `npm run dev` serves it on `:5180` |
+| `web/` | Next.js app. Landing at `/`, dashboard at `/dashboard` |
 | `backend/` | Java API (JDBC + MySQL) and its deploy files |
 
-Run the site locally with `python3 serve.py` and open <http://localhost:4611/>. Without a reachable API the dashboard switches to an offline copy kept in the browser and says so in its header.
+Run the app with `cd web && npm install && npm run dev`, then open <http://localhost:3000/>. Without a reachable API the dashboard switches to an offline copy kept in the browser and says so in its header.
