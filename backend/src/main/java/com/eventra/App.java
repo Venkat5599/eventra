@@ -127,6 +127,7 @@ public final class App extends Application {
     public static void error(String message) {
         Platform.runLater(() -> {
             javafx.scene.control.Alert a = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+            a.setTitle(message == null ? "Not saved" : message);
             a.setHeaderText("Not saved");
             a.setContentText(message);
             a.showAndWait();

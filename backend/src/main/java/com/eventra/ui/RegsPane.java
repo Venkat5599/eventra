@@ -127,6 +127,9 @@ public final class RegsPane {
             public Participant fromString(String s) { return null; }
         });
         TextField notes = new TextField();
+        ev.setAccessibleText("Register event");
+        person.setAccessibleText("Register person");
+        notes.setAccessibleText("Register notes");
         javafx.scene.layout.GridPane g = new javafx.scene.layout.GridPane();
         g.setHgap(8);
         g.setVgap(8);
@@ -134,6 +137,7 @@ public final class RegsPane {
         g.addRow(1, new Label("Participant"), person);
         g.addRow(2, new Label("Notes"), notes);
         dialog.getDialogPane().setContent(g);
+        ((javafx.scene.control.Button) dialog.getDialogPane().lookupButton(javafx.scene.control.ButtonType.OK)).setAccessibleText("Save registration");
         dialog.setResultConverter(btn -> btn == javafx.scene.control.ButtonType.OK && ev.getValue() != null && person.getValue() != null
                 ? new RegisterInput(ev.getValue().id(), person.getValue().id(), notes.getText())
                 : null);

@@ -107,11 +107,22 @@ public final class EventsPane {
         DatePicker end = new DatePicker(existing == null ? LocalDate.now() : LocalDate.parse(existing.endDate()));
         Spinner<Integer> capacity = new Spinner<>(1, 100000, existing == null ? 30 : existing.capacity());
         capacity.setEditable(true);
+        capacity.getEditor().setAccessibleText("Capacity");
         ComboBox<String> st = new ComboBox<>();
         st.getItems().addAll("draft", "open", "closed", "completed");
         st.setValue(existing == null ? "draft" : existing.status());
+        st.setAccessibleText("Event status");
+        code.setAccessibleText("Event code");
+        name.setAccessibleText("Event name");
+        category.setAccessibleText("Category");
+        venue.setAccessibleText("Venue");
+        organizer.setAccessibleText("Organizer");
         GridPane g = form(code, name, category, venue, organizer, start, end, capacity, st);
+        start.setAccessibleText("Start");
+        end.setAccessibleText("End");
         dialog.getDialogPane().setContent(g);
+        javafx.scene.control.Button ok = (javafx.scene.control.Button) dialog.getDialogPane().lookupButton(javafx.scene.control.ButtonType.OK);
+        ok.setAccessibleText("Save event");
         dialog.setResultConverter(btn -> btn == javafx.scene.control.ButtonType.OK
                 ? new EventInput(code.getText(), name.getText(), category.getText(), venue.getText(), "",
                 start.getValue() == null ? "" : start.getValue().toString(),

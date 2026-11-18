@@ -91,6 +91,10 @@ public final class SchedulePane {
         DatePicker date = new DatePicker(existing == null ? LocalDate.now() : LocalDate.parse(existing.date()));
         TextField start = new TextField(existing == null ? "09:00" : existing.start());
         TextField end = new TextField(existing == null ? "10:00" : existing.end());
+        title.setAccessibleText("Session title");
+        room.setAccessibleText("Session room");
+        start.setAccessibleText("Session start");
+        end.setAccessibleText("Session end");
         Label warn = new Label();
         end.focusedProperty().addListener((obs, was, focused) -> {
             if (!focused && !endAfter(start.getText(), end.getText())) warn.setText("End time must be after the start time.");
@@ -108,6 +112,7 @@ public final class SchedulePane {
         g.addRow(6, new Label("End"), end);
         g.add(warn, 1, 7);
         dialog.getDialogPane().setContent(g);
+        ((javafx.scene.control.Button) dialog.getDialogPane().lookupButton(javafx.scene.control.ButtonType.OK)).setAccessibleText("Save session");
         dialog.setResultConverter(btn -> {
             if (btn != javafx.scene.control.ButtonType.OK || ev.getValue() == null) return null;
             return new SessionInput(ev.getValue().id(), title.getText(), speaker.getText(), room.getText(),

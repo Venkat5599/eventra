@@ -94,6 +94,11 @@ public final class PeoplePane {
             boolean ok = cur != null && cur.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
             email.setStyle(ok || cur == null || cur.isBlank() ? "" : "-fx-border-color: #d92d20;");
         });
+        name.setAccessibleText("Person name");
+        email.setAccessibleText("Person email");
+        phone.setAccessibleText("Phone");
+        org.setAccessibleText("College");
+        dept.setAccessibleText("Department");
         javafx.scene.layout.GridPane g = new javafx.scene.layout.GridPane();
         g.setHgap(8);
         g.setVgap(8);
@@ -103,6 +108,7 @@ public final class PeoplePane {
         g.addRow(3, new Label("College"), org);
         g.addRow(4, new Label("Department"), dept);
         dialog.getDialogPane().setContent(g);
+        ((javafx.scene.control.Button) dialog.getDialogPane().lookupButton(javafx.scene.control.ButtonType.OK)).setAccessibleText("Save person");
         dialog.setResultConverter(btn -> btn == javafx.scene.control.ButtonType.OK
                 ? new ParticipantInput(name.getText(), email.getText(), phone.getText(), org.getText(), dept.getText())
                 : null);
