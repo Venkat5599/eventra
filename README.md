@@ -70,6 +70,8 @@ Project link: https://github.com/Venkat5599/eventra
 
 Website: https://eventra-five-nu.vercel.app/
 
+Server status, a one-click check of every rule and the API: https://eventra-five-nu.vercel.app/dashboard/#/backend
+
 ## Layout
 
 | Path | What |
