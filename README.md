@@ -72,6 +72,19 @@ Website: https://eventra-five-nu.vercel.app/
 
 Server status, a one-click check of every rule and the API: https://eventra-five-nu.vercel.app/dashboard/#/backend
 
+## Website
+
+The website reads and writes the same MySQL database through the Java API (`backend/src/main/java/com/eventra/Server.java`). It never keeps its own copy: if the API doesn't answer, it says so and shows nothing.
+
+```bash
+cd web/dashboard
+npm install
+npm run dev          # http://localhost:5180/dashboard/
+npm run build        # then copy dist/* into web/site/dashboard/
+```
+
+`web/site/` is the landing page plus the built dashboard, deployed as static files. Copy `web/site/vercel.example.json` to `vercel.json` and set your API host so `/api/*` is forwarded to it. The landing's display font is a trial licence and is not in the repo; the page falls back to the system font without it.
+
 ## Layout
 
 | Path | What |
@@ -82,6 +95,9 @@ Server status, a one-click check of every rule and the API: https://eventra-five
 | `backend/src/main/java/com/eventra/Db.java` | JDBC |
 | `backend/src/main/resources/schema.sql` | MySQL tables |
 | `backend/pom.xml` | JavaFX 21, MySQL Connector/J |
+| `backend/src/main/java/com/eventra/Server.java` | JSON API the website uses |
+| `web/dashboard/` | Website dashboard source (React, Vite) |
+| `web/site/` | Landing page and the built dashboard |
 
 ## License
 
