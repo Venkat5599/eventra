@@ -1,6 +1,6 @@
 #!/bin/bash
 # Finish the Eventra API on the host. Idempotent. Does not touch other apps.
-# Expects /tmp/eventra-release/{eventra-backend.jar,seed.json,eventra-api.service,eventra-jre.tgz}
+# Expects /tmp/eventra-release/{eventra-backend.jar,eventra-api.service,eventra-jre.tgz}
 exec > /tmp/eventra-finish.log 2>&1
 set -euo pipefail
 echo "start $(date)"
@@ -25,9 +25,6 @@ fi
 echo "java-ok"
 
 install -m 0644 "$SRC/eventra-backend.jar" /opt/eventra/eventra-backend.jar
-if [ -f "$SRC/seed.json" ]; then
-  install -m 0644 "$SRC/seed.json" /opt/eventra/seed.json
-fi
 install -m 0644 "$SRC/eventra-api.service" /etc/systemd/system/eventra-api.service
 
 mkdir -p /etc/eventra
@@ -40,7 +37,6 @@ HOST=127.0.0.1
 DB_URL=jdbc:mysql://127.0.0.1:3306/eventra?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
 DB_USER=eventra
 DB_PASSWORD=${PW}
-SEED_FILE=/opt/eventra/seed.json
 CORS_ORIGINS=
 EOF
   echo "env-written"

@@ -8,7 +8,7 @@ User=eventra
 Group=eventra
 WorkingDirectory=/opt/eventra
 EnvironmentFile=/etc/eventra/eventra.env
-ExecStart=/opt/eventra/jre/bin/java -Xms64m -Xmx192m -Duser.timezone=UTC -jar /opt/eventra/eventra-backend.jar
+ExecStart=/opt/eventra/jre/bin/java -Xms64m -Xmx192m -Duser.timezone=UTC -cp /opt/eventra/eventra-backend.jar com.eventra.Server
 Restart=always
 RestartSec=3
 NoNewPrivileges=true

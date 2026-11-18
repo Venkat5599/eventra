@@ -42,7 +42,6 @@ PORT=8796
 DB_URL=jdbc:mysql://127.0.0.1:3306/eventra?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
 DB_USER=eventra
 DB_PASSWORD=${PW}
-SEED_FILE=/opt/eventra/seed.json
 CORS_ORIGINS=http://localhost:4611,http://127.0.0.1:4611,http://localhost:5180
 EOF
 fi
