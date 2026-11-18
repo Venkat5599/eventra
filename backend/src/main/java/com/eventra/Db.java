@@ -1,27 +1,78 @@
 package com.eventra;
 
 import com.eventra.Models.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Proxy;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.*;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
-/** JDBC access: connections, schema, row mapping, and the one-time sample seed. */
+/** JDBC access: a small connection pool, the schema, and row mapping. */
 public final class Db {
+    private static final int KEEP_OPEN = 4;
     private final String url, user, password;
+    private final ArrayDeque<Connection> idle = new ArrayDeque<>();
 
     public Db(String url, String user, String password) {
         this.url = url; this.user = user; this.password = password;
     }
 
+    /**
+     * Hands out a connection. Opening one costs a full MySQL handshake, so up to four are kept open
+     * and reused: close() on the returned connection puts it back instead of closing it.
+     */
     public Connection get() throws SQLException {
-        return DriverManager.getConnection(url, user, password);
+        Connection real = null;
+        synchronized (idle) {
+            while (!idle.isEmpty()) {
+                Connection c = idle.pollFirst();
+                if (c.isValid(2)) { real = c; break; }
+                try { c.close(); } catch (SQLException ignored) { }
+            }
+        }
+        if (real == null) real = DriverManager.getConnection(url, user, password);
+        return lease(real);
+    }
+
+    private Connection lease(Connection real) {
+        boolean[] returned = {false};
+        return (Connection) Proxy.newProxyInstance(Db.class.getClassLoader(), new Class<?>[]{Connection.class}, (proxy, m, args) -> {
+            switch (m.getName()) {
+                case "close" -> {
+                    if (returned[0]) return null;
+                    returned[0] = true;
+                    giveBack(real);
+                    return null;
+                }
+                case "isClosed" -> { return returned[0] || real.isClosed(); }
+                case "unwrap", "isWrapperFor" -> { /* fall through to the real connection */ }
+                default -> { if (returned[0]) throw new SQLException("Connection already returned to the pool."); }
+            }
+            try {
+                return m.invoke(real, args);
+            } catch (InvocationTargetException e) {
+                throw e.getCause();
+            }
+        });
+    }
+
+    private void giveBack(Connection real) {
+        try {
+            if (real.isClosed()) return;
+            if (!real.getAutoCommit()) { real.rollback(); real.setAutoCommit(true); }
+            real.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+            synchronized (idle) {
+                if (idle.size() < KEEP_OPEN) { idle.addLast(real); return; }
+            }
+            real.close();
+        } catch (SQLException e) {
+            try { real.close(); } catch (SQLException ignored) { }
+        }
     }
 
     /** Applies schema.sql; every statement is CREATE TABLE IF NOT EXISTS. */
@@ -106,41 +157,6 @@ public final class Db {
                     list(c, "SELECT * FROM participants ORDER BY name", Db::participant),
                     list(c, "SELECT * FROM sessions ORDER BY session_date, start_time", Db::session),
                     list(c, "SELECT * FROM registrations ORDER BY registered_at", Db::registration));
-        }
-    }
-
-    /** Loads the sample data set once, only into an empty database. */
-    public int seedIfEmpty(String seedFile, ObjectMapper json) throws SQLException, IOException {
-        if (seedFile == null || seedFile.isBlank() || !Files.exists(Path.of(seedFile))) return 0;
-        try (Connection c = get()) {
-            if (count(c, "SELECT COUNT(*) FROM events") > 0 || count(c, "SELECT COUNT(*) FROM participants") > 0) return 0;
-            Snapshot s = json.readValue(Files.readString(Path.of(seedFile)), Snapshot.class);
-            c.setAutoCommit(false);
-            try {
-                for (EventItem e : s.events())
-                    update(c, "INSERT INTO events(id,code,name,category,venue,description,start_date,end_date,capacity,status,organizer) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-                            e.id(), e.code(), e.name(), e.category(), e.venue(), e.description(), Date.valueOf(e.startDate()),
-                            Date.valueOf(e.endDate()), e.capacity(), e.status(), e.organizer());
-                for (Participant p : s.participants())
-                    update(c, "INSERT INTO participants(id,name,email,phone,organization,department,created_at) VALUES (?,?,?,?,?,?,?)",
-                            p.id(), p.name(), p.email(), p.phone(), p.organization(), p.department(), Models.ts(p.createdAt()));
-                for (Session x : s.sessions())
-                    update(c, "INSERT INTO sessions(id,event_id,title,speaker,room,session_date,start_time,end_time) VALUES (?,?,?,?,?,?,?,?)",
-                            x.id(), x.eventId(), x.title(), x.speaker(), x.room(), Date.valueOf(x.date()),
-                            Time.valueOf(x.start() + ":00"), Time.valueOf(x.end() + ":00"));
-                for (Registration r : s.registrations()) {
-                    String t = r.ticketCode();
-                    int seq = Integer.parseInt(t.substring(t.lastIndexOf('-') + 1)) - 1000;
-                    update(c, "INSERT INTO registrations(id,seq,event_id,participant_id,status,ticket_code,notes,registered_at,checked_in_at) VALUES (?,?,?,?,?,?,?,?,?)",
-                            r.id(), seq, r.eventId(), r.participantId(), r.status(), t, Models.str(r.notes()),
-                            Models.ts(r.registeredAt()), Models.ts(r.checkedInAt()));
-                }
-                c.commit();
-            } catch (Exception e) {
-                c.rollback();
-                throw e;
-            }
-            return s.events().size() + s.participants().size() + s.sessions().size() + s.registrations().size();
         }
     }
 }
